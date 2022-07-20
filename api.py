@@ -5,6 +5,7 @@ from flaskr.readGames import readGames
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
+# http://127.0.0.1:5000/api/v1/readGames?focus=ARI&opponents=SFN&years=1998+2021
 @app.route('/api/v1/readGames', methods=['GET'])
 def api_filter():
     query_parameters = request.args

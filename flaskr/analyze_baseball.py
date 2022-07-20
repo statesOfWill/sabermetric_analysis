@@ -14,8 +14,8 @@ def applyInputs(input, games):
     for game in games.split("\n"):
         gameArr = game.split(",")
         if(len(gameArr) > 11):
-            t0 = Team(gameArr[6], gameArr[10])
-            t1 = Team(gameArr[3], gameArr[9])
+            t0 = Team(gameArr[6], gameArr[10], gameArr[25])
+            t1 = Team(gameArr[3], gameArr[9], gameArr[53])
             gamesList.append(Game(input,t0, t1))
     return gamesList
 
@@ -28,19 +28,26 @@ def getWinner(game):
 def calcSeasonResult(games, input):
     winPercents = []
     gamesCountAgainstOpp = []
+    homehrCounts = []
+    awayhrCounts = []
     for opp in input.opps:
+        homehrCount = 0
+        awayhrCount = 0
         gameCountAgainstOpp = 0
         teamOFWInCount = 0
         for game in games:
+            homehrCount += int(game.home.numHomeRuns)
+            awayhrCount += int(game.away.numHomeRuns)
             if(opp == game.away.name or opp == game.home.name):
                 gameCountAgainstOpp+=1
                 if(getWinner(game) == input.teamOFName):
                     teamOFWInCount+=1
+        homehrCounts.append(homehrCount)
+        awayhrCounts.append(awayhrCount)
         gamesCountAgainstOpp.append(gameCountAgainstOpp)
         if(gameCountAgainstOpp > 0):winPercents.append(teamOFWInCount/gameCountAgainstOpp)
         else: winPercents.append(0.0)
-    return [winPercents, gamesCountAgainstOpp] 
-
+    return [winPercents, gamesCountAgainstOpp, homehrCounts, awayhrCounts] 
 
 def calcNTeamSeasonResult(file_path, input):
     with open(file_path, 'r') as f:
@@ -53,7 +60,7 @@ def calcNTeamSeasonResult(file_path, input):
             if(getWinner(game) == input.teamOFName): game.home.winCount+=1
             else: game.away.winCount+=1
         resultArr = calcSeasonResult(byTeamGames, input)
-        return SeasonResult(input.year, input.teamOFName, input.opps, resultArr[1], resultArr[0])
+        return SeasonResult(input.year, input.teamOFName, input.opps, resultArr[1], resultArr[0], resultArr[2], resultArr[3])
 
 # Field(s)  Meaning
 #     1     Date in the form "yyyymmdd"
